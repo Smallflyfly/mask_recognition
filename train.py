@@ -19,7 +19,7 @@ def train(net, data_file, label_file, epochs, lr):
         T.Resize(size=(256, 256)),
         T.RandomHorizontalFlip(p=0.5),
         T.ToTensor(),
-        T.Normalize([0, 0, 0], [0, 0, 0])
+        T.Normalize([0.56687369, 0.44000871, 0.39886727], [0.2415682, 0.2131414, 0.19494878])
     ])
     dataset = MyDataset(data_file, label_file, transforms)
     model = net
@@ -42,7 +42,7 @@ def train(net, data_file, label_file, epochs, lr):
                 label = label.cuda()
             optimizer.zero_grad()
             out = model(im)
-            loss = loss_func(out)
+            loss = loss_func(out, label)
             loss.backward()
             optimizer.step()
             num_epochs += 1
@@ -51,7 +51,7 @@ def train(net, data_file, label_file, epochs, lr):
                 log.info('{} / {}: {} / {} -----------> loss: {}'.format(epoch+1, epochs, index+1, len(data_loader), loss))
         if epoch+1 % 5 == 0:
             save_network(net, epoch+1)
-
+        lr_scheduler.step()
     writer.close()
 
 

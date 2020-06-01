@@ -29,6 +29,7 @@ class MyDataset(data.Dataset):
 
     def __getitem__(self, index):
         im = Image.open(self._data[index])
+        im = im / 255.
         if self._transforms:
             im = self._transforms(im)
         label = self._label[index]

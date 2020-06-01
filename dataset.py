@@ -5,14 +5,15 @@
 
 from torch.utils import data
 from PIL import Image
+import PIL
+import numpy as np
 
 
 class MyDataset(data.Dataset):
 
-    def __init__(self, data_file, label_file, transforms=None, mode='train'):
+    def __init__(self, data_file, transforms=None, mode='train'):
         super(MyDataset, self).__init__()
         self._data_file = data_file
-        self._label_file = label_file
         self._transforms = transforms
         self._mode = mode
         self._data = []
@@ -21,17 +22,16 @@ class MyDataset(data.Dataset):
         with open(self._data_file) as df:
             lines = df.readlines()
             for line in lines:
-                self._data.append(line.strip())
-        with open(self._label_file) as lf:
-            lines = lf.readlines()
-            for line in lines:
-                self._label.append(line.strip())
+                self._data.append(line.strip().split()[0])
+                self._label.append(line.strip().split()[1])
 
     def __getitem__(self, index):
         im = Image.open(self._data[index])
-        im = im / 255.
         if self._transforms:
             im = self._transforms(im)
         label = self._label[index]
         return im, label
+
+    def __len__(self):
+        return len(self._data)
 

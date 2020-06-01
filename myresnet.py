@@ -98,7 +98,7 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __int__(self, block, layers, num_classes=10, zero_init_residual=False,
+    def __init__(self, block, layers, num_classes=10, zero_init_residual=False,
                 groups=1, width_per_group=64, replace_stride_with_dilation=None,
                 norm_layer=None):
         super(ResNet, self).__init__()
@@ -128,7 +128,7 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512*block.expanseion, num_classes)
+        self.fc = nn.Linear(512*block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -154,16 +154,16 @@ class ResNet(nn.Module):
         if dilate:
             self.dilation *= stride
             stride = 1
-        if stride != 1 or self.inplanes != planes * block.expanseion:
+        if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                conv1x1(self.inplanes, planes * block.expanseion, stride),
-                normal_layer(planes * block.expanseion)
+                conv1x1(self.inplanes, planes * block.expansion, stride),
+                normal_layer(planes * block.expansion)
             )
 
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample, self.groups,
                             self.base_width, previous_dilation, normal_layer))
-        self.inplanes = planes * block.expanseion
+        self.inplanes = planes * block.expansion
         for _ in (1, blocks):
             layers.append(block(self.inplanes, planes, groups=self.groups,
                                 base_width=self.base_width, dilation=self.dilation,
@@ -172,7 +172,7 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
 
-def _resnet(arch, block, layers, pretrained, progress, **kwargs):
+def _resnet(arc, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
     return model
 

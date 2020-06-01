@@ -14,16 +14,16 @@ import logging as log
 from utils import save_network
 
 
-def train(net, data_file, label_file, epochs, lr):
+def train(net, data_file, epochs, lr):
     transforms = T.Compose([
         T.Resize(size=(256, 256)),
         T.RandomHorizontalFlip(p=0.5),
         T.ToTensor(),
         T.Normalize([0.56687369, 0.44000871, 0.39886727], [0.2415682, 0.2131414, 0.19494878])
     ])
-    dataset = MyDataset(data_file, label_file, transforms)
+    dataset = MyDataset(data_file, transforms)
     model = net
-    data_loader = DataLoader(dataset, batch_size=16, shuffle=True)
+    data_loader = DataLoader(dataset, batch_size=4, shuffle=True)
     if torch.cuda.is_available():
         model.cuda()
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9,
@@ -57,8 +57,7 @@ def train(net, data_file, label_file, epochs, lr):
 
 if __name__ == '__main__':
     net = resnet50(num_classes=2)
-    epoch = 50
+    epoch = 1
     lr = 0.005
     data_file = './data/train.txt'
-    label_file = './data/label.txt'
-    train(net, data_file, label_file, epoch, lr)
+    train(net, data_file, epoch, lr)

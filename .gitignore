@@ -5,3 +5,5 @@
 *.jpeg
 *.JPEG
 *.PNG
+/runs
+/.idea

@@ -18,7 +18,6 @@ def cal_mean_std(path):
         for image in images:
             im = cv2.imread(os.path.join(path, folder, image))
             im = im[:, :, ::-1]
-            im = im / 255.
             # im = im.reshape(1, im.shape[0], im.shape[1], im.shape[2])
             if mean is None and std is None:
                 mean, std = cv2.meanStdDev(im)

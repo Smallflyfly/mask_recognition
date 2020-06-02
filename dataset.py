@@ -30,7 +30,7 @@ class MyDataset(data.Dataset):
         if self._transforms:
             im = self._transforms(im)
         label = self._label[index]
-        return im, label
+        return im, int(label)
 
     def __len__(self):
         return len(self._data)

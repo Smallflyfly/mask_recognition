@@ -4,6 +4,7 @@
 # @FileName: myresnet.py
 
 import torch.nn as nn
+import torch
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -73,7 +74,7 @@ class Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forword(self, x):
+    def forward(self, x):
         identity = x
 
         out = self.conv1(x)
@@ -146,6 +147,23 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.bn3.weight, 0)
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+
+        return x
 
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
         normal_layer = self._norm_layer

@@ -14,6 +14,7 @@ import torch.nn as nn
 
 def demo(image, weight):
     model = resnet50(num_classes=2)
+    model = model.load_state_dict(torch.load(weight))
     model.eval()
     transform = T.Compose([
         T.Resize(size=(256, 256)),
@@ -25,6 +26,7 @@ def demo(image, weight):
     im = cv2.imread(image)
     # opencv BGR --> RGB
     im = im[:, :, ::-1]
+    im = Image.fromarray(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
     im = transform(im)
     im = im.reshape(1, im.shape[0], im.shape[1], im.shape[2])
     if torch.cuda.is_available():
@@ -32,14 +34,20 @@ def demo(image, weight):
         im.cuda()
     out = model(im)
     out = soft_max(out)
-    prob = out.max(1)
-    print(out)
-    print(prob)
+    # print(out)
+    # fang[-1]
+    # prob = out.max(1)
+    y = torch.argmax(out)
+    # print(out)
+    print(y)
+    print('****************')
+    # print(type(prob))
+    # fang[-1]
 
 
 if __name__ == '__main__':
     path = './demo'
     images = os.listdir(path)
-    weight = './weights/*.pth'
+    weight = './weights/net_15.pth'
     for image in images:
         demo(os.path.join(path, image), weight)

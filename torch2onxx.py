@@ -15,10 +15,14 @@ def torch2onxx():
     dummy_input = torch.randn(1, 3, 256, 256, requires_grad=True)
     model = resnet50(num_classes=2)
     model = model.load_state_dict(torch.load(model_path))
-    torch.onnx.export(model,
-                      dummy_input,
-                      onxx_model, verbose=False,
-                      training=False, do_constant_folding=True,
-                      input_names=['input'],
-                      output_names=['output']
-                      )
+    oxmodel = torch.onnx.export(model,
+                                dummy_input,
+                                onxx_model, verbose=False,
+                                training=False, do_constant_folding=True,
+                                input_names=['input'],
+                                output_names=['output']
+                                )
+
+
+if __name__ == '__main__':
+    torch2onxx()
